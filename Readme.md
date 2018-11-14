@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Edgar Soloviev](https://up.htmlacademy.ru/javascript/16/user/235125).
-* Наставник: `Неизвестно`.
+* Наставник: `Антон Якушев`.
 
 ---
 
