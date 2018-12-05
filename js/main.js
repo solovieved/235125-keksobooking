@@ -6,7 +6,7 @@ var AD_FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'condi
 var AD_DESCRIPTION = '';
 var AD_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var QUANTITY_OBJECTS = 8;
-var PIN_WIDTH = 65;
+var PIN_WIDTH = 50;
 var MAP = document.querySelector('.map');
 
 // генератор адресов аватарок
@@ -47,22 +47,23 @@ function shuffleArr(arr) {
     arr[i] = arr[j];
     arr[j] = temp;
   }
+  return arr;
 }
 
 var generatorObject = function () {
-var ads = [];
-  for (var i = 0; i < QUANTITY_OBJECTS.length; i++) {
+  var ads = [];
+  for (var i = 0; i < QUANTITY_OBJECTS; i++) {
     var locationX = getRandomNum(PIN_WIDTH / 2, MAP.offsetWidth - PIN_WIDTH / 2);
     var locationY = getRandomNum(130, 630);
-    ads.push ({
+    ads.push({
       author: {
         avatar: adAvatar[i]
       },
 
       offer: {
-        title: AD_TITLE[i],
+        title: getRandomArray(AD_TITLE),
         address: locationX + ', ' + locationY,
-        price: getRandomNumber(1000, 1000000),
+        price: getRandomNum(1000, 1000000),
         type: getRandomArray(AD_TYPE),
         rooms: getRandomNum(1, 5),
         guests: getRandomNum(1, 10),
@@ -81,7 +82,93 @@ var ads = [];
   }
   return ads;
 };
-generatorObject();
+var array = generatorObject();
 
-//активация карты
+// активация карты
 MAP.classList.remove('map--faded');
+
+// разметка пина из шаблона
+var pin = document.querySelector('#pin').content.querySelector('.map__pin');
+
+// наполненние меток данными
+var renderPin = function (pinAd) {
+  var newPin = pin.cloneNode(true);
+  newPin.style.left = pinAd.location.x + 'px';
+  newPin.style.top = pinAd.location.y + 'px';
+  newPin.querySelector('img').src = pinAd.author.avatar;
+  newPin.querySelector('img').alt = pinAd.offer.title;
+  return newPin;
+};
+
+var fragment = document.createDocumentFragment();
+
+// создание меток
+for (var i = 0; i < QUANTITY_OBJECTS; i++) {
+  fragment.appendChild(renderPin(array[i]));
+}
+
+// отрисовка меток
+var mapPins = document.querySelector('.map__pins');
+mapPins.appendChild(fragment);
+
+// разметка карточки из шаблона
+var card = document.querySelector('#card').content.querySelector('.map__card');
+
+// фото в объявлении
+var getPhotos = function (arr) {
+  for (var p = 0; p < arr.length; p++) {
+    var img = document.createElement('img');
+    img.className = 'popup__photo';
+    img.src = arr[p];
+    img.alt = 'Фотография жилья';
+    img.width = 45;
+    img.height = 40;
+    fragment.appendChild(img);
+  }
+  return fragment;
+};
+
+// доступные удобства
+var getFeatures = function (arr) {
+  for (var q = 0; q < arr.length; q++) {
+    var li = document.createElement('li');
+    li.className = 'popup__feature popup__feature--' + arr[q];
+    fragment.appendChild(li);
+  }
+  return fragment;
+};
+
+// создание объявлений
+var renderCard = function (cardAd) {
+  var newCard = card.cloneNode(true);
+  var typeRus;
+  switch (cardAd.offer.type) {
+    case 'flat':
+      typeRus = 'Квартира';
+      break;
+    case 'bungalo':
+      typeRus = 'Бунгало';
+      break;
+    case 'house':
+      typeRus = 'Дом';
+      break;
+    case 'palace':
+      typeRus = 'Дворец';
+      break;
+  }
+  newCard.querySelector('.popup__title').textContent = cardAd.offer.title;
+  newCard.querySelector('.popup__text--address').textContent = cardAd.offer.address;
+  newCard.querySelector('.popup__text--price').textContent = cardAd.offer.price + '₽/ночь';
+  newCard.querySelector('.popup__type').textContent = typeRus;
+  newCard.querySelector('.popup__text--capacity').textContent = cardAd.offer.rooms + 'комнаты для ' + cardAd.offer.guests + ' гостей';
+  newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardAd.offer.checkin + ', выезд до ' + cardAd.offer.checkout;
+  newCard.querySelector('.popup__features').innerHTML = '';
+  newCard.querySelector('.popup__features').appendChild(getFeatures(cardAd.offer.features));
+  newCard.querySelector('.popup__description').textContent = cardAd.offer.description;
+  newCard.querySelector('.popup__photos').innerHTML = '';
+  newCard.querySelector('.popup__photos').appendChild(getPhotos(cardAd.offer.photos));
+  newCard.querySelector('.popup__avatar').src = cardAd.author.avatar;
+  return newCard;
+};
+
+MAP.insertBefore(renderCard(array[0]), MAP.querySelector('.map__filters-container'));
