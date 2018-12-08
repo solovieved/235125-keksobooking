@@ -199,12 +199,7 @@ mapPinMain.addEventListener('mouseup', function () {
   address.value = Math.round((mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2)) + ', ' + Math.round((mapPinMain.offsetTop + mapPinMain.offsetHeight + NIB_HEIGHT));
 });
 
-var mapCard = map.querySelector('.map__card');
-
 var displayCard = function (ads) {
-  if (mapCard !== null) {
-    mapCard.remove();
-  }
   map.insertBefore(renderCard(ads), map.querySelector('.map__filters-container'));
 };
 
