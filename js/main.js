@@ -7,11 +7,23 @@ var AD_DESCRIPTION = '';
 var AD_PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var QUANTITY_OBJECTS = 8;
 var PIN_WIDTH = 50;
-var TYPE_RUS = {
-  flat: 'Квартира',
-  bungalo: 'Бунгало',
-  house: 'Дом',
-  palace: 'Дворец'
+var TYPES = {
+  flat: {
+    rus: 'Квартира',
+    min: 1000
+  },
+  bungalo: {
+    rus: 'Бунгало',
+    min: 0
+  },
+  house: {
+    rus: 'Дом',
+    min: 5000
+  },
+  palace: {
+    rus: 'Дворец',
+    min: 10000
+  }
 };
 var NIB_HEIGHT = 22;
 var ESC_KEY = 27;
@@ -156,7 +168,7 @@ var renderCard = function (cardAd) {
   newCard.querySelector('.popup__title').textContent = cardAd.offer.title;
   newCard.querySelector('.popup__text--address').textContent = cardAd.offer.address;
   newCard.querySelector('.popup__text--price').textContent = cardAd.offer.price + ' ₽/ночь';
-  newCard.querySelector('.popup__type').textContent = TYPE_RUS[cardAd.offer.type];
+  newCard.querySelector('.popup__type').textContent = TYPES.rus[cardAd.offer.type];
   newCard.querySelector('.popup__text--capacity').textContent = cardAd.offer.rooms + 'комнаты для ' + cardAd.offer.guests + ' гостей';
   newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardAd.offer.checkin + ', выезд до ' + cardAd.offer.checkout;
   newCard.querySelector('.popup__features').innerHTML = '';
@@ -218,28 +230,11 @@ var popupEscPressHandler = function (evt) {
 var type = document.querySelector('#type');
 var price = document.querySelector('#price');
 
-var changePrice = function (evt) {
-  var minPrice = evt.target.value;
-  switch (minPrice) {
-    case 'flat':
-      price.placeholder = 1000;
-      price.min = 1000;
-      break;
-    case 'bungalo':
-      price.placeholder = 0;
-      price.min = 0;
-      break;
-    case 'house':
-      price.placeholder = 5000;
-      price.min = 5000;
-      break;
-    case 'palace':
-      price.placeholder = 10000;
-      price.min = 10000;
-      break;
-  }
+var priceChangeHandler = function () {
+  price.placeholder = TYPES[type.value].min;
+  price.min = TYPES[type.value].min;
 };
-type.addEventListener('change', changePrice);
+type.addEventListener('change', priceChangeHandler);
 
 var timeIn = document.querySelector('#timein');
 var timeOut = document.querySelector('#timeout');
@@ -254,19 +249,16 @@ var selectOutChangeHandler = function () {
 };
 timeOut.addEventListener('change', selectOutChangeHandler);
 
-var adFormSubmit = document.querySelector('.ad-form__submit');
 var roomNumber = document.querySelector('#room_number');
 var capacity = document.querySelector('#capacity');
 
 var checkGuestNumber = function () {
-  adFormSubmit.addEventListener('click', function () {
+  adForm.addEventListener('submit', function () {
     if (roomNumber.value !== '100' && capacity.value === '0') {
       capacity.setCustomValidity('Выберите количество гостей');
     } else if (roomNumber.value === '100' && capacity.value !== '0') {
       capacity.setCustomValidity('Эти комнаты не для гостей');
-    } else if (roomNumber.value === '1' && capacity.value !== '1') {
-      capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
-    } else if (roomNumber.value === '2' && capacity.value === '3') {
+    } else if ((roomNumber.value === '1' && capacity.value !== '1') || (roomNumber.value === '2' && capacity.value === '3')) {
       capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
     } else {
       capacity.setCustomValidity('');
