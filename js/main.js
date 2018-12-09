@@ -214,3 +214,64 @@ var popupEscPressHandler = function (evt) {
     document.removeEventListener('keydown', popupEscPressHandler);
   }
 };
+
+var type = document.querySelector('#type');
+var price = document.querySelector('#price');
+
+var changePrice = function (evt) {
+  var minPrice = evt.target.value;
+  switch (minPrice) {
+    case 'flat':
+      price.placeholder = 1000;
+      price.min = 1000;
+      break;
+    case 'bungalo':
+      price.placeholder = 0;
+      price.min = 0;
+      break;
+    case 'house':
+      price.placeholder = 5000;
+      price.min = 5000;
+      break;
+    case 'palace':
+      price.placeholder = 10000;
+      price.min = 10000;
+      break;
+  }
+};
+type.addEventListener('change', changePrice);
+
+var timeIn = document.querySelector('#timein');
+var timeOut = document.querySelector('#timeout');
+
+var selectInChangeHandler = function () {
+  timeOut.selectedIndex = timeIn.selectedIndex;
+};
+timeIn.addEventListener('change', selectInChangeHandler);
+
+var selectOutChangeHandler = function () {
+  timeIn.selectedIndex = timeOut.selectedIndex;
+};
+timeOut.addEventListener('change', selectOutChangeHandler);
+
+var adFormSubmit = document.querySelector('.ad-form__submit');
+var roomNumber = document.querySelector('#room_number');
+var capacity = document.querySelector('#capacity');
+
+var checkGuestNumber = function () {
+  adFormSubmit.addEventListener('click', function () {
+    if (roomNumber.value !== '100' && capacity.value === '0') {
+      capacity.setCustomValidity('Выберите количество гостей');
+    } else if (roomNumber.value === '100' && capacity.value !== '0') {
+      capacity.setCustomValidity('Эти комнаты не для гостей');
+    } else if (roomNumber.value === '1' && capacity.value !== '1') {
+      capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
+    } else if (roomNumber.value === '2' && capacity.value === '3') {
+      capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
+    } else {
+      capacity.setCustomValidity('');
+      adForm.submit();
+    }
+  });
+};
+checkGuestNumber();
