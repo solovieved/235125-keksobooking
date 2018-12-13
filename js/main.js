@@ -203,7 +203,7 @@ var adForm = document.querySelector('.ad-form');
 var address = document.querySelector('#address');
 
 // активация по клику
-mapPinMain.addEventListener('mouseup', function () {
+mapPinMain.addEventListener('click', function () {
   map.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   disableForm(false);
@@ -267,3 +267,66 @@ var checkGuestNumber = function () {
   });
 };
 checkGuestNumber();
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var changeСoordinates = {
+      x: mapPinMain.offsetLeft - shift.x,
+      y: mapPinMain.offsetTop - shift.y
+    };
+
+    var positionMinX = 0;
+    var positionMaxX = map.offsetWidth - mapPinMain.offsetWidth;
+    var positionMinY = 130 - mapPinMain.offsetHeight - NIB_HEIGHT;
+    var positionMaxY = 630 - mapPinMain.offsetHeight - NIB_HEIGHT;
+
+    var getLimitMoving = function () {
+      if (changeСoordinates.x < positionMinX) {
+        changeСoordinates.x = positionMinX;
+      }
+      if (changeСoordinates.x > positionMaxX) {
+        changeСoordinates.x = positionMaxX;
+      }
+      if (changeСoordinates.y < positionMinY) {
+        changeСoordinates.y = positionMinY;
+      }
+      if (changeСoordinates.y > positionMaxY) {
+        changeСoordinates.y = positionMaxY;
+      }
+    };
+    getLimitMoving();
+
+    mapPinMain.style.top = changeСoordinates.y + 'px';
+    mapPinMain.style.left = changeСoordinates.x + 'px';
+
+    address.value = Math.round((mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2)) + ', ' + Math.round((mapPinMain.offsetTop + mapPinMain.offsetHeight + NIB_HEIGHT));
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
