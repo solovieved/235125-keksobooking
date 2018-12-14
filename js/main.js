@@ -107,7 +107,6 @@ var generateObject = function () {
   }
   return ads;
 };
-var array = generateObject();
 
 // разметка пина из шаблона
 var pin = document.querySelector('#pin').content.querySelector('.map__pin');
@@ -127,7 +126,6 @@ var renderPin = function (pinAd) {
 };
 
 var fragment = document.createDocumentFragment();
-var mapPins = document.querySelector('.map__pins');
 
 // создание меток
 var drawPin = function (arr) {
@@ -136,9 +134,6 @@ var drawPin = function (arr) {
   }
   return fragment;
 };
-
-// разметка карточки из шаблона
-var card = document.querySelector('#card').content.querySelector('.map__card');
 
 // фото в объявлении
 var getPhotos = function (arr) {
@@ -164,6 +159,8 @@ var getFeatures = function (arr) {
   return fragment;
 };
 
+// разметка карточки из шаблона
+var card = document.querySelector('#card').content.querySelector('.map__card');
 var newCard = card.cloneNode(true);
 
 // создание объявлений
@@ -201,9 +198,7 @@ var disableForm = function (trueFalse) {
 };
 disableForm(true);
 
-var mapPinMain = document.querySelector('.map__pin--main');
 var adForm = document.querySelector('.ad-form');
-var address = document.querySelector('#address');
 
 var displayCard = function (ads) {
   map.insertBefore(renderCard(ads), map.querySelector('.map__filters-container'));
@@ -262,8 +257,14 @@ var checkGuestNumber = function () {
 };
 checkGuestNumber();
 
+var mapPinMain = document.querySelector('.map__pin--main');
+var address = document.querySelector('#address');
+var array = generateObject();
+var mapPins = document.querySelector('.map__pins');
+
 mapPinMain.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
+  mapPins.appendChild(drawPin(array));
 
   var startCoords = {
     x: evt.clientX,
@@ -283,7 +284,7 @@ mapPinMain.addEventListener('mousedown', function (evt) {
       y: moveEvt.clientY
     };
 
-    var changeСoordinates = {
+    var changeСoords = {
       x: mapPinMain.offsetLeft - shift.x,
       y: mapPinMain.offsetTop - shift.y
     };
@@ -293,31 +294,32 @@ mapPinMain.addEventListener('mousedown', function (evt) {
     var positionMinY = MIN_Y - mapPinMain.offsetHeight - NIB_HEIGHT;
     var positionMaxY = MAX_Y - mapPinMain.offsetHeight - NIB_HEIGHT;
 
-    if (changeСoordinates.x < positionMinX) {
-      changeСoordinates.x = positionMinX;
+    if (changeСoords.x < positionMinX) {
+      changeСoords.x = positionMinX;
     }
-    if (changeСoordinates.x > positionMaxX) {
-      changeСoordinates.x = positionMaxX;
+    if (changeСoords.x > positionMaxX) {
+      changeСoords.x = positionMaxX;
     }
-    if (changeСoordinates.y < positionMinY) {
-      changeСoordinates.y = positionMinY;
+    if (changeСoords.y < positionMinY) {
+      changeСoords.y = positionMinY;
     }
-    if (changeСoordinates.y > positionMaxY) {
-      changeСoordinates.y = positionMaxY;
+    if (changeСoords.y > positionMaxY) {
+      changeСoords.y = positionMaxY;
     }
 
-    mapPinMain.style.top = changeСoordinates.y + 'px';
-    mapPinMain.style.left = changeСoordinates.x + 'px';
+    mapPinMain.style.top = changeСoords.y + 'px';
+    mapPinMain.style.left = changeСoords.x + 'px';
 
     address.value = Math.round((mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2)) + ', ' + Math.round((mapPinMain.offsetTop + mapPinMain.offsetHeight + NIB_HEIGHT));
   };
+
+
 
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     disableForm(false);
-    mapPins.appendChild(drawPin(array));
     address.value = Math.round((mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2)) + ', ' + Math.round((mapPinMain.offsetTop + mapPinMain.offsetHeight + NIB_HEIGHT));
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
