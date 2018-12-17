@@ -28,7 +28,7 @@
   };
 
   var popupEscPressHandler = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEY) {
+    if (evt.keyCode === window.const.ESC_KEY) {
       window.data.map.querySelector('.map__card').remove();
       document.removeEventListener('keydown', popupEscPressHandler);
     }
@@ -38,8 +38,8 @@
   var price = document.querySelector('#price');
 
   var priceChangeHandler = function () {
-    price.placeholder = window.utils.TYPES[type.value].min;
-    price.min = window.utils.TYPES[type.value].min;
+    price.placeholder = window.const.TYPES[type.value].min;
+    price.min = window.const.TYPES[type.value].min;
   };
   type.addEventListener('change', priceChangeHandler);
 

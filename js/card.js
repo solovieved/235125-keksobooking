@@ -9,9 +9,9 @@
       img.alt = 'Фотография жилья';
       img.width = 45;
       img.height = 40;
-      window.utils.fragment.appendChild(img);
+      window.utils.fragment().appendChild(img);
     }
-    return window.utils.fragment;
+    return window.utils.fragment();
   };
 
   // доступные удобства
@@ -19,9 +19,9 @@
     for (var i = 0; i < arr.length; i++) {
       var li = document.createElement('li');
       li.className = 'popup__feature popup__feature--' + arr[i];
-      window.utils.fragment.appendChild(li);
+      window.utils.fragment().appendChild(li);
     }
-    return window.utils.fragment;
+    return window.utils.fragment();
   };
 
   // разметка карточки из шаблона
@@ -33,7 +33,7 @@
     newCard.querySelector('.popup__title').textContent = cardAd.offer.title;
     newCard.querySelector('.popup__text--address').textContent = cardAd.offer.address;
     newCard.querySelector('.popup__text--price').textContent = cardAd.offer.price + ' ₽/ночь';
-    newCard.querySelector('.popup__type').textContent = window.utils.TYPES[cardAd.offer.type].rus;
+    newCard.querySelector('.popup__type').textContent = window.const.TYPES[cardAd.offer.type].rus;
     newCard.querySelector('.popup__text--capacity').textContent = cardAd.offer.rooms + 'комнаты для ' + cardAd.offer.guests + ' гостей';
     newCard.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardAd.offer.checkin + ', выезд до ' + cardAd.offer.checkout;
     newCard.querySelector('.popup__features').innerHTML = '';

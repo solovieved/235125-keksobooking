@@ -20,9 +20,9 @@
   // создание меток
   var drawPin = function (arr) {
     for (var i = 0; i < arr.length; i++) {
-      window.utils.fragment.appendChild(renderPin(arr[i]));
+      window.utils.fragment().appendChild(renderPin(arr[i]));
     }
-    return window.utils.fragment;
+    return window.utils.fragment();
   };
   window.pin = {
     drawPin: drawPin
