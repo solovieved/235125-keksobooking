@@ -2,6 +2,7 @@
 (function () {
   // фото в объявлении
   var getPhotos = function (arr) {
+    var fragment = document.createDocumentFragment();
     for (var i = 0; i < arr.length; i++) {
       var img = document.createElement('img');
       img.className = 'popup__photo';
@@ -9,19 +10,20 @@
       img.alt = 'Фотография жилья';
       img.width = 45;
       img.height = 40;
-      window.utils.fragment().appendChild(img);
+      fragment.appendChild(img);
     }
-    return window.utils.fragment();
+    return fragment;
   };
 
   // доступные удобства
   var getFeatures = function (arr) {
+    var fragment = document.createDocumentFragment();
     for (var i = 0; i < arr.length; i++) {
       var li = document.createElement('li');
       li.className = 'popup__feature popup__feature--' + arr[i];
-      window.utils.fragment().appendChild(li);
+      fragment.appendChild(li);
     }
-    return window.utils.fragment();
+    return fragment;
   };
 
   // разметка карточки из шаблона

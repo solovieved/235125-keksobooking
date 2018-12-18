@@ -6,13 +6,13 @@
   var NIB_HEIGHT = 22;
   var mapPinMain = document.querySelector('.map__pin--main');
   var address = document.querySelector('#address');
-  var array = window.data.generateObject();
-  var mapPins = document.querySelector('.map__pins');
+  // var array = window.pin.generateObject();
+  // var mapPins = document.querySelector('.map__pins');
 
 
   mapPinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
-    mapPins.appendChild(window.pin.drawPin(array));
+
 
     var startCoords = {
       x: evt.clientX,
@@ -63,6 +63,7 @@
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
+      // mapPins.appendChild(window.pin.drawPin(array));
       window.data.map.classList.remove('map--faded');
       window.form.adForm.classList.remove('ad-form--disabled');
       window.form.disableForm(false);
@@ -74,4 +75,8 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.map = {
+    mapPinMain: mapPinMain
+  };
 })();
