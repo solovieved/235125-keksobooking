@@ -4,7 +4,7 @@
   var pin = document.querySelector('#pin').content.querySelector('.map__pin');
 
   // наполненние меток данными
-  var renderPin = function (pinAd) {
+  var renderPins = function (pinAd) {
     var newPin = pin.cloneNode(true);
     var handlePinClick = function () {
       window.form.displayCard(pinAd);
@@ -17,14 +17,7 @@
     return newPin;
   };
 
-  // создание меток
-  var drawPin = function (arr) {
-    for (var i = 0; i < arr.length; i++) {
-      window.utils.fragment().appendChild(renderPin(arr[i]));
-    }
-    return window.utils.fragment();
-  };
   window.pin = {
-    drawPin: drawPin
+    renderPins: renderPins
   };
 })();

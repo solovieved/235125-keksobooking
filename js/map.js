@@ -6,13 +6,34 @@
   var NIB_HEIGHT = 22;
   var mapPinMain = document.querySelector('.map__pin--main');
   var address = document.querySelector('#address');
-  var array = window.data.generateObject();
   var mapPins = document.querySelector('.map__pins');
 
+  // создание меток
+  var drawPins = function (arr) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < arr.length; i++) {
+      fragment.appendChild(window.pin.renderPins(arr[i]));
+    }
+    mapPins.appendChild(fragment);
+  };
 
+  var displayError = function (errorText) {
+    var error = document.querySelector('#error').content.querySelector('.error');
+    var NewError = error.cloneNode(true);
+    var errorMessage = NewError.querySelector('.error__message');
+    var errorButton = NewError.querySelector('.error__button');
+    errorMessage.textContent = errorText;
+    document.querySelector('main').insertAdjacentElement('beforebegin', NewError);
+    errorButton.addEventListener('click', closeError);
+  };
+
+  var closeError = function () {
+    var error = document.querySelector('.error');
+    document.querySelector('body').removeChild(error);
+  };
   mapPinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
-    mapPins.appendChild(window.pin.drawPin(array));
+
 
     var startCoords = {
       x: evt.clientX,
@@ -63,6 +84,7 @@
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
+      window.backend.load(drawPins, displayError);
       window.data.map.classList.remove('map--faded');
       window.form.adForm.classList.remove('ad-form--disabled');
       window.form.disableForm(false);
@@ -74,4 +96,9 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
+  window.map = {
+    mapPinMain: mapPinMain,
+    drawPins: drawPins
+  };
 })();
