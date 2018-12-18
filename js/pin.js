@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-  var QUANTITY_OBJECTS = 8;
   // разметка пина из шаблона
   var pin = document.querySelector('#pin').content.querySelector('.map__pin');
 
@@ -18,22 +17,7 @@
     return newPin;
   };
 
-  var getRandomArray = function (arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  };
-
-  var ads = [];
-  var generateObject = function (arr) {
-    for (var i = 0; i < QUANTITY_OBJECTS.length; i++) {
-      var data = getRandomArray(arr);
-      ads.push(data);
-    }
-    return ads;
-  };
-
   window.pin = {
-    generateObject: generateObject,
-    renderPins: renderPins,
-    ads: ads
+    renderPins: renderPins
   };
 })();

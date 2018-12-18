@@ -36,7 +36,7 @@
   };
 
   var popupEscPressHandler = function (evt) {
-    if (evt.keyCode === window.utils.ESC_KEY) {
+    if (evt.keyCode === window.const.ESC_KEY) {
       window.data.map.querySelector('.map__card').remove();
       document.removeEventListener('keydown', popupEscPressHandler);
     }
@@ -59,7 +59,7 @@
   timeOut.addEventListener('change', selectOutChangeHandler);
 
   var checkGuestNumber = function () {
-    adForm.addEventListener('submit', function () {
+    adForm.addEventListener('submit', function (evt) {
       if (roomNumber.value !== '100' && capacity.value === '0') {
         capacity.setCustomValidity('Выберите количество гостей');
       } else if (roomNumber.value === '100' && capacity.value !== '0') {
@@ -68,18 +68,26 @@
         capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
       } else {
         capacity.setCustomValidity('');
-        adForm.submit();
+        window.backend.upload(new FormData(adForm), uploadForm, window.pin.displayError);
+        evt.preventDefault();
       }
     });
   };
   checkGuestNumber();
-
   var onReset = function () {
     adForm.reset();
     window.data.map.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     disableForm(true);
     window.map.mapPinMain.style = 'left:' + POSITION_LEFT + 'px; top:' + POSITION_TOP + 'px;';
+    var mapPinNot = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < mapPinNot.length; i++) {
+      document.querySelector('.map__pins').removeChild(mapPinNot[i]);
+    }
+    var card = document.querySelector('.map__card');
+    if (card !== null) {
+      document.querySelector('.map__card').remove();
+    }
   };
   adFormReset.addEventListener('click', onReset);
 
@@ -99,11 +107,6 @@
     onReset();
     onDisplaySuccess();
   };
-
-  adForm.addEventListener('submit', function (evt) {
-    window.backend.upload(new FormData(adForm), uploadForm, window.pin.displayError);
-    evt.preventDefault();
-  });
 
   window.form = {
     displayCard: displayCard,

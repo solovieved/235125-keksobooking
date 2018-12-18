@@ -6,9 +6,7 @@
   var NIB_HEIGHT = 22;
   var mapPinMain = document.querySelector('.map__pin--main');
   var address = document.querySelector('#address');
-  // var array = window.pin.generateObject();
   var mapPins = document.querySelector('.map__pins');
-
 
   // создание меток
   var drawPins = function (arr) {
