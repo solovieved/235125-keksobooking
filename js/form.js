@@ -57,9 +57,8 @@
     timeIn.selectedIndex = timeOut.selectedIndex;
   };
   timeOut.addEventListener('change', selectOutChangeHandler);
-
   var checkGuestNumber = function () {
-    adForm.addEventListener('submit', function (evt) {
+    adForm.addEventListener('click', function (evt) {
       if (roomNumber.value !== '100' && capacity.value === '0') {
         capacity.setCustomValidity('Выберите количество гостей');
       } else if (roomNumber.value === '100' && capacity.value !== '0') {
