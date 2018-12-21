@@ -27,17 +27,17 @@
   disableForm(true);
 
   var displayCard = function (ads) {
-    window.data.map.insertBefore(window.card.renderCard(ads), window.data.map.querySelector('.map__filters-container'));
+    window.map.adMap.insertBefore(window.card.renderCard(ads), window.map.adMap.querySelector('.map__filters-container'));
   };
 
   var popupCloseClickHandler = function () {
-    window.data.map.querySelector('.map__card').remove();
+    window.map.adMap.querySelector('.map__card').remove();
     window.card.newCard.querySelector('.popup__close').removeEventListener('click', popupCloseClickHandler);
   };
 
   var popupEscPressHandler = function (evt) {
     if (evt.keyCode === window.const.ESC_KEY) {
-      window.data.map.querySelector('.map__card').remove();
+      window.map.adMap.querySelector('.map__card').remove();
       document.removeEventListener('keydown', popupEscPressHandler);
     }
   };
@@ -57,9 +57,8 @@
     timeIn.selectedIndex = timeOut.selectedIndex;
   };
   timeOut.addEventListener('change', selectOutChangeHandler);
-
   var checkGuestNumber = function () {
-    adForm.addEventListener('submit', function (evt) {
+    adForm.addEventListener('click', function (evt) {
       if (roomNumber.value !== '100' && capacity.value === '0') {
         capacity.setCustomValidity('Выберите количество гостей');
       } else if (roomNumber.value === '100' && capacity.value !== '0') {
@@ -76,7 +75,7 @@
   checkGuestNumber();
   var onReset = function () {
     adForm.reset();
-    window.data.map.classList.add('map--faded');
+    window.map.adMap.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     disableForm(true);
     window.map.mapPinMain.style = 'left:' + POSITION_LEFT + 'px; top:' + POSITION_TOP + 'px;';

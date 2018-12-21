@@ -7,14 +7,82 @@
   var mapPinMain = document.querySelector('.map__pin--main');
   var address = document.querySelector('#address');
   var mapPins = document.querySelector('.map__pins');
+  var adMap = document.querySelector('.map');
 
-  // создание меток
-  var drawPins = function (arr) {
+  var drawPins = function (ads) {
+    document.querySelectorAll('button.map__pin[type=button]').forEach(function (pin) {
+      pin.remove();
+    });
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < arr.length; i++) {
-      fragment.appendChild(window.pin.renderPins(arr[i]));
-    }
+    ads.forEach(function (ad) {
+      fragment.appendChild(window.pin.renderPins(ad));
+    });
     mapPins.appendChild(fragment);
+  };
+
+  var mapFilters = document.querySelector('.map__filters');
+  var housingType = document.querySelector('#housing-type');
+  var housingPrice = document.querySelector('#housing-price');
+  var priceRange = {
+    'any': {
+      min: 0,
+      max: Infinity
+    },
+    'low': {
+      min: 0,
+      max: 9999
+    },
+    'middle': {
+      min: 10000,
+      max: 49999
+    },
+    'high': {
+      min: 50000,
+      max: Infinity
+    }
+  };
+  var housingRooms = document.querySelector('#housing-rooms');
+  var housingGuests = document.querySelector('#housing-guests');
+  var housingFeatures = document.querySelector('#housing-features');
+
+  var getFilterType = function (ad) {
+    return (housingType.value === 'any') || (housingType.value === ad.offer.type);
+  };
+
+  var getFilterPrice = function (ad) {
+    var minPrice = priceRange[housingPrice.value].min;
+    var maxPrice = priceRange[housingPrice.value].max;
+    return (housingPrice.value === 'any') || (ad.offer.price <= minPrice && ad.offer.price <= maxPrice);
+  };
+
+  var getFilterRooms = function (ad) {
+    return (housingRooms.value === 'any') || (Number(housingRooms.value) === ad.offer.rooms);
+  };
+
+  var getFilterGuests = function (ad) {
+    return (housingGuests.value === 'any') || (Number(housingGuests.value) === ad.offer.guests);
+  };
+
+  var getSelectedFeatures = function (ad) {
+    var checked = housingFeatures.querySelectorAll('input[type=checkbox]:checked');
+    var features = true;
+    Array.from(checked).every(function (checkbox) {
+      features = ad.offer.features.indexOf(checkbox.value) !== -1;
+      return features;
+    });
+    return features;
+  };
+
+  var onDataLoad = function (ads) {
+    drawPins(ads.slice(0, 5));
+    var drawFilteredPins = function () {
+      var filteredAds = ads.filter(function (ad) {
+        return getFilterType(ad) && getFilterPrice(ad) && getFilterRooms(ad) && getFilterGuests(ad) && getSelectedFeatures(ad);
+      });
+      drawPins(filteredAds.slice(0, 5));
+    };
+    mapFilters.addEventListener('change', window.utils.debounce(drawFilteredPins));
+    mapFilters.addEventListener('change', drawFilteredPins);
   };
 
   var displayError = function (errorText) {
@@ -59,7 +127,7 @@
       };
 
       var positionMinX = MIN_X;
-      var positionMaxX = window.data.map.offsetWidth - mapPinMain.offsetWidth;
+      var positionMaxX = adMap.offsetWidth - mapPinMain.offsetWidth;
       var positionMinY = MIN_Y - mapPinMain.offsetHeight - NIB_HEIGHT;
       var positionMaxY = MAX_Y - mapPinMain.offsetHeight - NIB_HEIGHT;
 
@@ -84,8 +152,8 @@
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-      window.backend.load(drawPins, displayError);
-      window.data.map.classList.remove('map--faded');
+      window.backend.load(onDataLoad, displayError);
+      adMap.classList.remove('map--faded');
       window.form.adForm.classList.remove('ad-form--disabled');
       window.form.disableForm(false);
       address.value = Math.round((mapPinMain.offsetLeft + mapPinMain.offsetWidth / 2)) + ', ' + Math.round((mapPinMain.offsetTop + mapPinMain.offsetHeight + NIB_HEIGHT));
@@ -98,6 +166,7 @@
   });
 
   window.map = {
+    adMap: adMap,
     mapPinMain: mapPinMain,
     drawPins: drawPins
   };
