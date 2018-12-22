@@ -1,5 +1,7 @@
 'use strict';
 (function () {
+  var POSITION_LEFT = 570;
+  var POSITION_TOP = 375;
   var fieldset = document.querySelectorAll('fieldset');
   var mapFilter = document.querySelectorAll('.map__filter');
   var adFormReset = document.querySelector('.ad-form__reset');
@@ -10,8 +12,7 @@
   var timeOut = document.querySelector('#timeout');
   var roomNumber = document.querySelector('#room_number');
   var capacity = document.querySelector('#capacity');
-  var POSITION_LEFT = 570;
-  var POSITION_TOP = 375;
+  var adMap = document.querySelector('.map');
 
   var disableEnableForm = function (block, onOff) {
     for (var i = 0; i < block.length; i++) {
@@ -27,17 +28,17 @@
   disableForm(true);
 
   var displayCard = function (ads) {
-    window.map.adMap.insertBefore(window.card.renderCard(ads), window.map.adMap.querySelector('.map__filters-container'));
+    adMap.insertBefore(window.card.renderPopup(ads), adMap.querySelector('.map__filters-container'));
   };
 
   var popupCloseClickHandler = function () {
-    window.map.adMap.querySelector('.map__card').remove();
-    window.card.newCard.querySelector('.popup__close').removeEventListener('click', popupCloseClickHandler);
+    adMap.querySelector('.map__card').remove();
+    window.card.newPopup.querySelector('.popup__close').removeEventListener('click', popupCloseClickHandler);
   };
 
   var popupEscPressHandler = function (evt) {
     if (evt.keyCode === window.const.ESC_KEY) {
-      window.map.adMap.querySelector('.map__card').remove();
+      adMap.querySelector('.map__card').remove();
       document.removeEventListener('keydown', popupEscPressHandler);
     }
   };
@@ -57,61 +58,77 @@
     timeIn.selectedIndex = timeOut.selectedIndex;
   };
   timeOut.addEventListener('change', selectOutChangeHandler);
-  var checkGuestNumber = function () {
-    adForm.addEventListener('click', function (evt) {
-      if (roomNumber.value !== '100' && capacity.value === '0') {
-        capacity.setCustomValidity('Выберите количество гостей');
-      } else if (roomNumber.value === '100' && capacity.value !== '0') {
-        capacity.setCustomValidity('Эти комнаты не для гостей');
-      } else if ((roomNumber.value === '1' && capacity.value !== '1') || (roomNumber.value === '2' && capacity.value === '3')) {
-        capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
-      } else {
-        capacity.setCustomValidity('');
-        window.backend.upload(new FormData(adForm), uploadForm, window.pin.displayError);
-        evt.preventDefault();
-      }
-    });
-  };
-  checkGuestNumber();
-  var onReset = function () {
-    adForm.reset();
-    window.map.adMap.classList.add('map--faded');
-    adForm.classList.add('ad-form--disabled');
-    disableForm(true);
-    window.map.mapPinMain.style = 'left:' + POSITION_LEFT + 'px; top:' + POSITION_TOP + 'px;';
-    var mapPinNot = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < mapPinNot.length; i++) {
-      document.querySelector('.map__pins').removeChild(mapPinNot[i]);
+
+  adForm.addEventListener('change', function () {
+    if (roomNumber.value !== '100' && capacity.value === '0') {
+      capacity.setCustomValidity('Выберите количество гостей');
+    } else if (roomNumber.value === '100' && capacity.value !== '0') {
+      capacity.setCustomValidity('Эти комнаты не для гостей');
+    } else if ((roomNumber.value === '1' && capacity.value !== '1') || (roomNumber.value === '2' && capacity.value === '3')) {
+      capacity.setCustomValidity('Количество гостей не может превышать количество комнат');
+    } else {
+      capacity.setCustomValidity('');
     }
+  });
+
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.upload(new FormData(adForm), uploadForm, window.map.displayErrorHandler);
+  });
+
+  var removeCard = function () {
     var card = document.querySelector('.map__card');
     if (card !== null) {
       document.querySelector('.map__card').remove();
     }
   };
-  adFormReset.addEventListener('click', onReset);
 
-  var onDisplaySuccess = function () {
+  var resetHandler = function () {
+    adForm.reset();
+    adMap.classList.add('map--faded');
+    adForm.classList.add('ad-form--disabled');
+    disableForm(true);
+    window.map.pinMain.style = 'left:' + POSITION_LEFT + 'px; top:' + POSITION_TOP + 'px;';
+    var mapPinNot = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < mapPinNot.length; i++) {
+      document.querySelector('.map__pins').removeChild(mapPinNot[i]);
+    }
+    removeCard();
+  };
+  adFormReset.addEventListener('click', resetHandler);
+
+  var displaySuccessHandler = function () {
     var success = document.querySelector('#success').content.querySelector('.success');
-    var NewSuccess = success.cloneNode(true);
-    document.querySelector('main').insertAdjacentElement('beforebegin', NewSuccess);
-    NewSuccess.addEventListener('click', closeSuccess);
+    var newSuccess = success.cloneNode(true);
+    document.querySelector('main').insertAdjacentElement('beforebegin', newSuccess);
+    newSuccess.addEventListener('click', closeSuccessHandler);
+    document.addEventListener('keydown', successEscPressHandler);
   };
 
-  var closeSuccess = function () {
+  var closeSuccessHandler = function () {
     var success = document.querySelector('.success');
     document.querySelector('body').removeChild(success);
   };
 
+  var successEscPressHandler = function (evt) {
+    if (evt.keyCode === window.const.ESC_KEY) {
+      document.querySelector('.success').remove();
+      document.removeEventListener('keydown', successEscPressHandler);
+    }
+  };
+
   var uploadForm = function () {
-    onReset();
-    onDisplaySuccess();
+    resetHandler();
+    displaySuccessHandler();
   };
 
   window.form = {
     displayCard: displayCard,
     popupCloseClickHandler: popupCloseClickHandler,
     popupEscPressHandler: popupEscPressHandler,
-    adForm: adForm,
-    disableForm: disableForm
+    sendBlock: adForm,
+    disable: disableForm,
+    removeCard: removeCard,
+    adMap: adMap
   };
 })();

@@ -50,7 +50,7 @@
   };
 
   window.card = {
-    renderCard: renderCard,
-    newCard: newCard
+    renderPopup: renderCard,
+    newPopup: newCard
   };
 })();

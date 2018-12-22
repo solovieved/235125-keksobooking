@@ -18,6 +18,6 @@
   };
 
   window.pin = {
-    renderPins: renderPins
+    renderMarker: renderPins
   };
 })();
