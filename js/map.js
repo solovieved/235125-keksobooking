@@ -73,7 +73,7 @@
     return features;
   };
 
-  var onDataLoad = function (ads) {
+  var dataLoadHandler = function (ads) {
     drawPins(ads.slice(0, 5));
     var drawFilteredPinsHandler = function () {
       var filteredAds = ads.filter(function (ad) {
@@ -162,7 +162,7 @@
 
     var mouseUpHandler = function (upEvt) {
       upEvt.preventDefault();
-      window.backend.load(onDataLoad, displayErrorHandler);
+      window.backend.load(dataLoadHandler, displayErrorHandler);
       window.form.adMap.classList.remove('map--faded');
       window.form.sendBlock.classList.remove('ad-form--disabled');
       window.form.disable(false);
