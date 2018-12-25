@@ -84,20 +84,21 @@
   };
 
   var avatarDefault = document.querySelector('.ad-form-header__preview').querySelector('img').src;
-  var loadAvatar = document.querySelector('.ad-form-header__preview').querySelector('img');
-  var adFormPhoto = document.querySelectorAll('.ad-form__photo');
-  var adFormPhotoContainer = document.querySelector('.ad-form__photo-container');
 
   var resetPhoto = function () {
-    loadAvatar.src = avatarDefault;
-    for (var i = 0; i < adFormPhoto.length; i++) {
-      adFormPhotoContainer.removeChild(adFormPhoto[i]);
+    var adFormPhotoContainer = document.querySelector('.ad-form__photo-container');
+    var adFormPhotoReset = document.querySelectorAll('.ad-form__photo--reset');
+    for (var i = 0; i < adFormPhotoReset.length; i++) {
+      adFormPhotoContainer.removeChild(adFormPhotoReset[i]);
+      if (document.querySelector('.ad-form__photo:not(.ad-form__photo--reset)') === null) {
+        window.avatar.adFormUpload.insertAdjacentHTML('afterend', '<div class="ad-form__photo" ></div>');
+      }
     }
   };
 
-
   var resetHandler = function () {
     adForm.reset();
+    window.avatar.loadPhoto.src = avatarDefault;
     resetPhoto();
     adMap.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
