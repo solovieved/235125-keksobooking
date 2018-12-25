@@ -83,8 +83,22 @@
     }
   };
 
+  var avatarDefault = document.querySelector('.ad-form-header__preview').querySelector('img').src;
+  var loadAvatar = document.querySelector('.ad-form-header__preview').querySelector('img');
+  var adFormPhoto = document.querySelectorAll('.ad-form__photo');
+  var adFormPhotoContainer = document.querySelector('.ad-form__photo-container');
+
+  var resetPhoto = function () {
+    loadAvatar.src = avatarDefault;
+    for (var i = 0; i < adFormPhoto.length; i++) {
+      adFormPhotoContainer.removeChild(adFormPhoto[i]);
+    }
+  };
+
+
   var resetHandler = function () {
     adForm.reset();
+    resetPhoto();
     adMap.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     disableForm(true);
